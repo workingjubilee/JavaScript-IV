@@ -50,24 +50,27 @@ class Student extends Person {
   }
   listSubjects() {
     if (typeof this.favSubjects === "string") {
+      // This if-branch handles if favSubjects is just a string.
       console.log(`Favorite subject? I like ${this.favSubjects}!`)
     } else if (typeof this.favSubjects === "object") {
+      // This elif responds to array versions of favSubjects.
         if (this.favSubjects.length === 1) {
+          // Here begins an if inside an else-if.
           console.log(`Favorite subject? I like ${this.favSubjects[0]}!`)
        } else if (this.favSubjects.length > 1) {
-      let tempSubjectList = this.favSubjects;
+      // Use a total-slice to copy out the entire string without creating a referent.
+      let tempSubjectList = this.favSubjects.slice();
+      // pop breaks it up into the list and the "and" catch.
       let listSubjectsAnd = tempSubjectList.pop();
-      let listSubjectsComma = tempSubjectList;
-      console.log(`Oh, my favorite subjects? I like ${listSubjectsComma.join(', ')} and ${listSubjectsAnd}.`
-      )
+      // .join(', ') will not create an Oxford comma but WILL convert to String.
+      console.log(`Oh, my favorite subjects? I like ${tempSubjectList.join(', ')}, and ${listSubjectsAnd}.`)
     } else {
       console.log("Favorite subject? I don't really have one.")
     } // end of the "listSubjects finds an array" branch.
-    } // end of the outer if-ele
-  } // listSubjects
+    } // end of the outer if-else
+  } // listSubjects()
   PRAssignment(subject) {
     console.log(`${this.name} has submitted a PR for ${subject}.`)
-    // a method that receives a subject as an argument and logs out that the student.name has submitted a PR for {subject}
   }
   sprintChallenge(subject) {
     console.log(`${this.name} has begun a Sprint Challenge for ${subject}.`)
@@ -120,6 +123,9 @@ pebbles.listSubjects();
 pebbles.PRAssignment('RockScript');
 pebbles.sprintChallenge('RockScript');
 fred.grade(pebbles,'RockScript');
+bambam.listSubjects();
+// Had to debug my code a little to make sure using ListSubjects twice worked.
+// Caused the change to .slice()
 bambam.listSubjects();
 barney.debugCode(bambam,'MeteoreacuteangleJS');
 barney.standUp('PM-Barney');
