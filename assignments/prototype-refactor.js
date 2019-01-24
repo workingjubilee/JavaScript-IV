@@ -27,23 +27,25 @@ Prototype Refactor
   * destroy() // prototype method -> returns the string: 'Object was removed from the game.'
 */
 
-function GameObject(stuff){
+
+class GameObject{
+  constructor(stuff){
   this.createdAt = stuff.createdAt;
   this.dimensions = stuff.dimensions
 }
-
-GameObject.prototype.destroy = function() {
-  // return this.name + ' was removed from the game.'
-  // see explodingbarrel.destroy() test,
-  // undefined results returning is bad.
-  // I have a theory that if I put in an if-else I can get error handling in case name is empty?
-  if (this.name !== undefined) {
-    return this.name + ' was removed from the game.'
-    } else {
-        return 'Object was removed from the game.'
+  destroy() {
+    // return this.name + ' was removed from the game.'
+    // see explodingbarrel.destroy() test,
+    // undefined results returning is bad.
+    // I have a theory that if I put in an if-else I can get error handling in case name is empty?
+    if (this.name !== undefined) {
+      return this.name + ' was removed from the game.'
+      } else {
+          return 'Object was removed from the game.'
+    }
+    // Verified, worked!
   }
-  // Verified, worked!
-}
+} // GameObject
 
 /*
   === CharacterStats ===
@@ -53,17 +55,20 @@ GameObject.prototype.destroy = function() {
   * should inherit destroy() from GameObject's prototype
 */
 
-function CharacterStats(stuff){
-  GameObject.call(this,stuff);
+class CharacterStats extends GameObject {
+  constructor(stuff){
+  super(stuff);
   this.healthPoints = stuff.healthPoints;
   this.name = stuff.name;
 }
-
-CharacterStats.prototype = Object.create(GameObject.prototype);
-// I can't help but feel I'm doing something wrong with ordering things but whatever.
-CharacterStats.prototype.takeDamage = function() {
+  takeDamage() {
     return this.name + ' took damage.'
+  }
 }
+
+
+// I can't help but feel I'm doing something wrong with ordering things but whatever.
+
 
 
 /*
@@ -76,18 +81,18 @@ CharacterStats.prototype.takeDamage = function() {
   * should inherit takeDamage() from CharacterStats
 */
 
-function Humanoid(stuff) {
-  CharacterStats.call(this,stuff);
+class Humanoid extends CharacterStats {
+  constructor(stuff) {
+  super(stuff);
   this.team = stuff.team;
   this.weapons = stuff.weapons;
   this.language = stuff.language;
+  }
+  greet() {
+    return `${this.name} offers a greeting in ${this.language}.`
+  }
 }
 
-Humanoid.prototype = Object.create(CharacterStats.prototype);
-
-Humanoid.prototype.greet = function() {
-  return `${this.name} offers a greeting in ${this.language}.`
-}
 
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -105,7 +110,7 @@ Humanoid.prototype.greet = function() {
       width: 1,
       height: 1,
     }
-  });
+ });
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -167,25 +172,22 @@ Humanoid.prototype.greet = function() {
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
   console.log(explodingbarrel.destroy());
-*/
+// */
 
   // Stretch task:
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
 
-function Fightable(stuff){
-  Humanoid.call(this,stuff);
+class Fightable extends Humanoid {
+  constructor(stuff){
+  super(stuff);
   this.epithet = stuff.epithet;
 }
-
-Fightable.prototype = Object.create(Humanoid.prototype);
-
-Fightable.prototype.arrive = function() {
+arrive() {
   console.log(`${this.name} ${this.epithet} strides into the arena!`)
 }
-
-Fightable.prototype.takeRealDamage = function(damage) {
+takeRealDamage(damage) {
   // This function is actually invoked _BY THE FIGHTABLE BEING HIT_.
   // You have to specify some amount of damage, then it subtracts
 
@@ -197,14 +199,13 @@ Fightable.prototype.takeRealDamage = function(damage) {
     console.log(`${this.takeDamage()} ${this.healthPoints} health points remaining.`);
   }
 }
-
-function Hero(stuff){
-  Fightable.call(this,stuff);
 }
 
-Hero.prototype = Object.create(Fightable.prototype);
-
-Hero.prototype.stab = function(target) {
+class Hero extends Fightable {
+  constructor(stuff){
+  super(stuff);
+}
+stab(target) {
   if (this.weapons.includes('Dagger')) {
     let damage = 1;
     console.log(`${this.name} stabs ${target.name}!`)
@@ -213,25 +214,26 @@ Hero.prototype.stab = function(target) {
     console.log('Error!');
   }
 }
-
-function Villain(stuff){
-  Fightable.call(this,stuff);
 }
 
-Villain.prototype = Object.create(Fightable.prototype);
-Villain.prototype.stomp = function(target) {
+class Villain extends Fightable{
+  constructor(stuff){
+    super(stuff);
+}
+stomp(target) {
   // needs to specify the target ^
   if (target.dimensions.height === undefined) {
     // had initially written with target.height
     console.log('Error!');
   } else if (this.dimensions.height > target.dimensions.height) {
-    console.log(`${this.name} stomps on ${target.name}!`);
+   console.log(`${this.name} stomps on ${target.name}!`);
     let damage = this.dimensions.height - target.dimensions.height;
       target.takeRealDamage(damage);
   } else if (this.dimensions.height < target.dimensions.height) {
     console.log(`${this.name} tries to stomp on ${target.name} but can't get a leg up!`);
   }
 }
+} //Villain
 
 const ogre = new Villain({
   createdAt: new Date(),
@@ -243,9 +245,10 @@ const ogre = new Villain({
   healthPoints: 20,
   name: 'Rek',
   epithet: 'the Ogre',
-  team: 'Bad Guy',
-  weapons: [
-    'Giant Club',
+ team: 'Bad Guy',
+  wepons: [
+    'Giant Club'
+     ,
   ],
   language: 'Black Speech',
 });
