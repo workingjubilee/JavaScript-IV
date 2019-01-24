@@ -25,6 +25,10 @@ class Instructor extends Person {
   grade(student,subject) {
     console.log(`${student.name} receives a perfect score on ${subject}.`);
   }
+  score(student) {
+    student.grade += Math.floor(Math.random() * 12 -4);
+    console.log(`${this.name} scores ${student.name} on the latest assignment and writes down ${this.name}'s new grade: ${student.grade}.`)
+  } // score(student)
 } // Instructor
 
 class ProjectManager extends Instructor {
@@ -47,6 +51,7 @@ class Student extends Person {
     this.previousBackground = stuff.previousBackground;
     this.className = stuff.className;
     this.favSubjects = stuff.favSubjects;
+    this.grade = 0;
   }
   listSubjects() {
     if (typeof this.favSubjects === "string") {
@@ -75,6 +80,21 @@ class Student extends Person {
   sprintChallenge(subject) {
     console.log(`${this.name} has begun a Sprint Challenge for ${subject}.`)
   }
+  enroll(test = false) {
+    if (this.grade === 0 && test === true) {
+      this.grade = 100;
+  } if (this.grade === 0 && test === false) {
+    this.grade = Math.floor(Math.random() * 70);
+    console.log(`${this.name} enrolls and starts to get to work! ${this.name} receives an initial grade of ${this.grade}!`)
+  }
+} // enroll()
+  graduate() {
+    if (this.grade > 70) {
+      console.log(`Huzzah! ${this.name} has graduated!`);
+    } else {
+      console.log(`It's not time for ${this.name} to graduate!`);
+  }
+} // graduate()
 } // Student
 
 const fred = new Instructor({
@@ -94,7 +114,9 @@ const barney = new ProjectManager({
   gender: 'male',
   favLanguage: 'Jokes',
   specialty: 'Back-end',
-  catchPhrase: `Hey Fred!`
+  catchPhrase: `Hey Fred!`,
+  gradClassName: 'Full-Stone RockDev 17',
+  favInstructor: 'Fred'
 });
 
 const pebbles = new Student({
@@ -124,11 +146,16 @@ pebbles.PRAssignment('RockScript');
 pebbles.sprintChallenge('RockScript');
 fred.grade(pebbles,'RockScript');
 bambam.listSubjects();
-// Had to debug my code a little to make sure using ListSubjects twice worked.
-// Caused the change to .slice()
+// Had to debug my code a little to make sure using ListSubjects twice worked (and didn't shrink BamBam's array), which caused the change to .slice()
 bambam.listSubjects();
 barney.debugCode(bambam,'MeteoreacuteangleJS');
 barney.standUp('PM-Barney');
+pebbles.enroll(true);
+fred.score(pebbles);
+pebbles.graduate();
+bambam.enroll();
+barney.score(bambam);
+bambam.graduate();
 
 
 // STRETCH:
